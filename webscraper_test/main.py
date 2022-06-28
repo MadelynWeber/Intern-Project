@@ -13,22 +13,24 @@ import requests
 
 # getting information from the website that data will be scraped from
 html_text = requests.get('https://www.houzz.com/professionals/kitchen-and-bath-remodelers/treeium-design-and-build-pfvwus-pf~914865704').text
-print(html_text)
+# print(html_text)
 
+# gathers all contents from the webpage's html
 page_contents = BeautifulSoup(html_text, 'lxml')
 
-# with open('./home.html', 'r') as html_file:
-#     file_contents = html_file.read()
-#     # print(file_contents)
+# getting star-rating values (formated as: "average rating <number> out of 5")
+rating_value = page_contents.find_all('span', class_='sr-only')
+# getting review text
+review_text = page_contents.find_all('div', class_='review-item_body-string')
 
-# page_contents = BeautifulSoup(file_contents, 'lxml')
-# tags = page_contents.find_all('p')
-# # print(tags)
+print("Star ratings: \n--------------------------------")
+for item in rating_value:
+    print(item.text)
+print()
 
-# # For contractor website:
-# # rating_value = page_contents.find_all('span', class_='sr-only') # ratings look like: "average rating <number> out of 5"
-# # review_text = page_contents.find_all('div', class_='review-item_body-string') # is a block of text
+# NOTE: review_text isn't getting the data needed from site --> figure out why
+print("Review text: \n--------------------------------")
+for item in review_text:
+    print(item.text)
 
-# for item in tags:
-#     print(item)
     
