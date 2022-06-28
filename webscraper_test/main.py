@@ -18,18 +18,22 @@ html_text = requests.get('https://www.houzz.com/professionals/kitchen-and-bath-r
 # gathers all contents from the webpage's html
 page_contents = BeautifulSoup(html_text, 'lxml')
 
+# getting the contractor company name
+name = page_contents.find('h1', class_='sc-mwxddt-0 kgyEnA')
 # getting star-rating values (formated as: "average rating <number> out of 5")
 rating_value = page_contents.find_all('span', class_='sr-only')
 # getting review text
-review_text = page_contents.find_all('div', class_='review-item_body-string')
+review_text = page_contents.find_all('div', class_='review-item__body-string')
+
+print("Company name: \n--------------------------------")
+print(name)
+print()
 
 print("Star ratings: \n--------------------------------")
 for item in rating_value:
     print(item.text)
 print()
 
-# NOTE: review_text isn't getting the data needed from site --> figure out why
 print("Review text: \n--------------------------------")
 for item in review_text:
     print(item.text)
-    
