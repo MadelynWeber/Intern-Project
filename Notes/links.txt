@@ -1,0 +1,19 @@
+Sentiment Analysis Links
+•	https://www.repustate.com/blog/sentiment-analysis-datasets/
+•	Lexicoder Sentiment Dictionary http://www.snsoroka.com/data-lexicoder/
+•	Opinion Lexicon https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html#lexicon
+•	Sentiment Polarity Lexicons For 81 Languages https://www.kaggle.com/rtatman/sentiment-lexicons-for-81-languages
+•	https://thecleverprogrammer.com/2021/11/24/add-labels-to-a-dataset-for-sentiment-analysis/
+
+Contractor Review Links
+•	https://www.thumbtack.com/instant-results/?zip_code=75002&category_pk=166573972257055145&project_pk=456954580159741967
+•	https://www.homeadvisor.com/profinder/
+• https://www.angi.com/companylist/contractor.htm
+• https://www.houzz.com/proMatch/handyman?m_refid=olm_google_720190069_43199500488_kwd-115160911&pos=&device=c&nw=g&matchtype=b&loc=9029030&loc2=&lsmr=ho_google&lsd=ho_google&gclid=EAIaIQobChMIsPbC0tXG-AIVTD6tBh1niw04EAMYAyAAEgKwivD_BwE
+
+Tutorial & Resource Links
+• https://towardsdatascience.com/web-scraping-basics-82f8b5acd45c
+• https://www.edureka.co/blog/web-scraping-with-python/
+• (explination on using BeautifulSoup with Selenium) --> https://medium.com/ymedialabs-innovation/web-scraping-using-beautiful-soup-and-selenium-for-dynamic-page-2f8ad15efe25
+• (tutorial on basic webscraping and BeautifulSoup library) --> https://www.youtube.com/watch?v=XVv6mJpFOb0
+• https://hackernoon.com/building-a-web-scraper-from-start-to-finish-bb6b95388184
