@@ -14,3 +14,6 @@ Contractor Review Links
 Tutorial & Resource Links
 • https://towardsdatascience.com/web-scraping-basics-82f8b5acd45c
 • https://www.edureka.co/blog/web-scraping-with-python/
+• (explination on using BeautifulSoup with Selenium) --> https://medium.com/ymedialabs-innovation/web-scraping-using-beautiful-soup-and-selenium-for-dynamic-page-2f8ad15efe25
+• (tutorial on basic webscraping and BeautifulSoup library) --> https://www.youtube.com/watch?v=XVv6mJpFOb0
+• https://hackernoon.com/building-a-web-scraper-from-start-to-finish-bb6b95388184
