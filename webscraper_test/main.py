@@ -8,20 +8,27 @@
 #       a. could be done using Selenium? Or see if BeautifulSoup library (or some other) has this functionality
 
 from bs4 import BeautifulSoup
+from selenium import webdriver
+import requests
 
-with open('./home.html', 'r') as html_file:
-    file_contents = html_file.read()
-    # print(file_contents)
+# getting information from the website that data will be scraped from
+html_text = requests.get('https://www.houzz.com/professionals/kitchen-and-bath-remodelers/treeium-design-and-build-pfvwus-pf~914865704').text
+print(html_text)
 
-page_contents = BeautifulSoup(file_contents, 'lxml')
-tags = page_contents.find_all('p')
-# print(tags)
-rating_value = page_contents.find_all('span') # ratings look like: "average rating <number> out of 5"
-review_text = page_contents.find_all('div') # is a block of text
+page_contents = BeautifulSoup(html_text, 'lxml')
 
-# rating_value class = sr-only
-# review_text class = review-item_body-string
+# with open('./home.html', 'r') as html_file:
+#     file_contents = html_file.read()
+#     # print(file_contents)
 
-for item in tags:
-    print(item)
+# page_contents = BeautifulSoup(file_contents, 'lxml')
+# tags = page_contents.find_all('p')
+# # print(tags)
+
+# # For contractor website:
+# # rating_value = page_contents.find_all('span', class_='sr-only') # ratings look like: "average rating <number> out of 5"
+# # review_text = page_contents.find_all('div', class_='review-item_body-string') # is a block of text
+
+# for item in tags:
+#     print(item)
     
