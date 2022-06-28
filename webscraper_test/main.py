@@ -7,6 +7,7 @@
 #  1. may have to implement some form of web interaction in order to click on specific contractors, then proceed to scrape data?
 #       a. could be done using Selenium? Or see if BeautifulSoup library (or some other) has this functionality
 
+import re
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import requests
@@ -18,33 +19,30 @@ html_text = requests.get('https://www.houzz.com/professionals/kitchen-and-bath-r
 # gathers all contents from the webpage's html
 page_contents = BeautifulSoup(html_text, 'lxml')
 
-# getting the contractor company name
-name = page_contents.find('h1', class_='sc-mwxddt-0 kgyEnA')
-# getting star-rating values (formated as: "average rating <number> out of 5")
-rating_value = page_contents.find_all('span', class_='sr-only')
-# getting review text
-review_text = page_contents.find_all('div', class_='review-item__body-string')
+# getting information per review block
+review_block = page_contents.find_all('div', class_='review-item')
+# print(review_block)
 
-print("Company name: \n--------------------------------")
-print(name)
-print()
+for item in review_block:
+    # print(item.text)
 
-print("Star ratings: \n--------------------------------")
-for item in rating_value:
-    print(item.text)
-print()
+    # getting star-rating values (formated as: "average rating <number> out of 5")
+    rating_value = item.find('span', class_='sr-only').text
+    print(rating_value)
+    
+    # getting review text
+    review_text = item.find('div', class_='review-item__body-string').text
+    print(review_text)
+    print()
 
-print("Review text: \n--------------------------------")
-for item in review_text:
-    print(item.text)
+    # TODO: figure out how to add review_text and rating_value to a csv file for collecting data from this page
+
 
 
 '''
     TODOs:
         1. figure out a way to keep the star rating and the review text together for each review
-        2. add each 1-5 star review to a corresponding dictionary
-            a. is it better to have 5 dictionaries for each star, or one big dictionary, where the key is the star rating
-                and the correponding value is a list of each rating for that star
+        2. add data to csv spreadsheet
         3. the company itself ~probably~ isn't important for training the model
         4. implement web automation using Selenium --> for this file's given website, needs to do the following...
             a. enter what kind of contractor we wish to search for on main page
