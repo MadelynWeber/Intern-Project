@@ -37,3 +37,18 @@ print()
 print("Review text: \n--------------------------------")
 for item in review_text:
     print(item.text)
+
+
+'''
+    TODOs:
+        1. figure out a way to keep the star rating and the review text together for each review
+        2. add each 1-5 star review to a corresponding dictionary
+            a. is it better to have 5 dictionaries for each star, or one big dictionary, where the key is the star rating
+                and the correponding value is a list of each rating for that star
+        3. the company itself ~probably~ isn't important for training the model
+        4. implement web automation using Selenium --> for this file's given website, needs to do the following...
+            a. enter what kind of contractor we wish to search for on main page
+            b. click on the contractor company from the results page
+            c. click on 'reviews'
+            d. scrape data
+'''
