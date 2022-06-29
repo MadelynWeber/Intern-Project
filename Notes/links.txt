@@ -17,3 +17,6 @@ Tutorial & Resource Links
 • (explination on using BeautifulSoup with Selenium) --> https://medium.com/ymedialabs-innovation/web-scraping-using-beautiful-soup-and-selenium-for-dynamic-page-2f8ad15efe25
 • (tutorial on basic webscraping and BeautifulSoup library) --> https://www.youtube.com/watch?v=XVv6mJpFOb0
 • https://hackernoon.com/building-a-web-scraper-from-start-to-finish-bb6b95388184
+
+Possible Sentiment Analysis Tools and API Links
+• https://deepai.org/machine-learning-model/sentiment-analysis
