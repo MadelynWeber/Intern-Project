@@ -1,70 +1,70 @@
 '''
     A file to test how to run a basic web scraper
     Site used for this implementation: https://www.houzz.com/proMatch/handyman?m_refid=olm_google_720190069_43199500488_kwd-115160911&pos=&device=c&nw=g&matchtype=b&loc=9029030&loc2=&lsmr=ho_google&lsd=ho_google&gclid=EAIaIQobChMIsPbC0tXG-AIVTD6tBh1niw04EAMYAyAAEgKwivD_BwE
+    NOTE: This file is specific to the site above, and will need to be altered to work for scraping data from other sites
+        (ie. changing links, html class names, Selenium calls, etc.)
 '''
 
-# NOTES:
-#  1. may have to implement some form of web interaction in order to click on specific contractors, then proceed to scrape data?
-#       a. could be done using Selenium? Or see if BeautifulSoup library (or some other) has this functionality
-
-import re
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
 import requests
 import csv
-import os
 
 URL = "https://www.houzz.com/professionals#"
 URL_TEST = "https://www.houzz.com/professionals/kitchen-and-bath-remodelers/treeium-design-and-build-pfvwus-pf~914865704"
 # html class name for finding contractors 
 BUTTON_CLASS = "hz-text-clamp__text-node"
+# html class name for contractor cards
+CARD_CLASS = "hz-pro-search-result__info"
+# html class name for contractor reviews
+REVIEW_CLASS = ""
 # path needs to be changed dpenending on where chromedriver.exe is saved on machine
 CHROME_PATH = "/Users/mxw115/Downloads/chromedriver"
+CONTRACTOR_CLASS = "hz-pro-search-results__item"
 
 f = open('./data/review_data.csv', 'w')
 # NOTE: this will re-write the file each time this file is ran
 writer = csv.writer(f)
 
-# getting information from the website that data will be scraped from
-html_text = requests.get(URL_TEST).text
-
-# Selenium interactions
 driver = webdriver.Chrome(executable_path=CHROME_PATH)
 driver.implicitly_wait(0.5)
 driver.get(URL)
-# clicks on specific contractor button to get to page with list of contractors
-driver.find_elements_by_class_name(BUTTON_CLASS).click() # --> THIS METHOD DOES NOT WORK, FIND SOMETHING ELSE TO REPLAFCE
-# wait for page load
-timeout = 5
-try:
-    element_present = EC.presence_of_element_located((By.Class, BUTTON_CLASS))
-    WebDriverWait(driver, timeout).until(element_present)
-except TimeoutException:
-    print("Timed out waiting for page to load.")
+driver.implicitly_wait(10)
 
-# TODO: click on individual contractor on page --> might need to get url from each individual page for data scraping step
-# TODO: go to 'reviews' tab and scrape data
-# TODO: go back to previous contractor page
-# TODO: click on next contractor on page and repeat
+# clicks on specific contractor button we wish to look at
+driver.find_element(By.CLASS_NAME, BUTTON_CLASS).click()
+driver.implicitly_wait(10)
+
+# clicks on the specific contractor company we wish to look at
+driver.find_element(By.CLASS_NAME, CARD_CLASS).click()
+driver.implicitly_wait(10)
+
+# creating ability to move between open tabs
+tab = driver.current_window_handle
+parent = driver.window_handles[0]
+child = driver.window_handles[1]
+driver.switch_to.window(child)
+driver.implicitly_wait(10)
+
+# get current url for scraping
+current_url = driver.current_url 
+
+# getting html information from url to be used with BeautifulSoup
+html_text = requests.get(current_url).text
 
 # gathers all contents from the webpage's html
 page_contents = BeautifulSoup(html_text, 'lxml')
 
 # getting information per review block
 review_block = page_contents.find_all('div', class_='review-item')
-# print(review_block)
 
 for item in review_block:
-    # print(item.text)
 
     # getting star-rating values (formated as: "average rating <number> out of 5")
     rating_value = item.find('span', class_='sr-only').text
-    print(rating_value)
 
     # re-formating the rating for entry into csv
     if "1" in rating_value:
@@ -80,19 +80,10 @@ for item in review_block:
     
     # getting review text
     review_text = item.find('div', class_='review-item__body-string').text
-    print(review_text)
-    print()
 
     # writing data to csv file
     writer.writerow([value] + [review_text])
 
 f.close()
 
-'''
-    TODOs and Notes:
-        4. implement web automation using Selenium --> for this file's given website, needs to do the following...
-            a. enter what kind of contractor we wish to search for on main page
-            b. click on the contractor company from the results page
-            c. click on 'reviews'
-            d. scrape data
-'''
+print("Finished scraping webpage.")
