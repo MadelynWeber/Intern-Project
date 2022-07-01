@@ -10,6 +10,7 @@ Contractor Review Links
 •	https://www.homeadvisor.com/profinder/
 • https://www.angi.com/companylist/contractor.htm
 • https://www.houzz.com/proMatch/handyman?m_refid=olm_google_720190069_43199500488_kwd-115160911&pos=&device=c&nw=g&matchtype=b&loc=9029030&loc2=&lsmr=ho_google&lsd=ho_google&gclid=EAIaIQobChMIsPbC0tXG-AIVTD6tBh1niw04EAMYAyAAEgKwivD_BwE
+• https://trustedpros.ca/write-a-review
 
 Tutorial & Resource Links
 • https://towardsdatascience.com/web-scraping-basics-82f8b5acd45c
