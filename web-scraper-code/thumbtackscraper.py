@@ -66,7 +66,7 @@ def main():
         # read through file one URL at a time
         urls = f.read().splitlines()
         for url in urls: 
-            # try:    
+            try:    
                 # open website through chromedriver
                 driver.get(url)
                 driver.implicitly_wait(10)
@@ -81,12 +81,11 @@ def main():
                         # download page for the link and extract page content and convert to BeautifulSoup object
                         soup = BeautifulSoup(response.content, 'html.parser')
 
-                        
+                        wait = WebDriverWait(driver, 20)
                         # continue clicking the next page until the last page is reached
                         while True:
                             nextBtn = driver.find_element(By.XPATH, '//button[@aria-label="Next"]')
 
-                            print(nextBtn)
                             # If the Next button is enabled/available, then enabled_next_page_btn size will be one.
                             # if len(nextBtn) < 1:
                             if not nextBtn.is_enabled():
@@ -104,24 +103,28 @@ def main():
                                         # rating = review[0]['data-star']
 
                                         rating = driver.findElement(By.XPATH, "//div[@class='_1Wv_Lm7Q0IE3AFEImQTWZ9']")[0]['data-star'].getText()
+                                        print(rating)
                                         
                                         # getting review text
                                         # review_text = item.find('div', id=re.compile('^review-text-')).text
                                         review_text = driver.findElement(By.XPATH, "//div[@id='id=re.compile('^review-text-')']").getText()
+                                        print(review_text)
 
                                         # writing data to csv file
                                         writer.writerow([rating] + [review_text.replace('\n', ' ')])
                                     except: 
                                         continue 
-                                # click on next page through chromedriver
-                                # driver.findElement(By.xpath('//button[@aria-label="Next"]')).click()
-                                nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
-                                driver.execute_script("arguments[0].click();", nextBtn)              
-                                # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//button[@aria-label="Next"]'))).click()
+                                # click on next page through chromedriver (+ synchronize the state between the browser and its DOM and WebDriver script)
+                                # driver.findElement(By.xpath('//button[@aria-label="Next"]')).click()   
+                                # wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH))).click()         
+                                nextBtn = wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH)))
+                                # nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
+                                driver.execute_script("arguments[0].click();", nextBtn)  
+                                print("clicked")
 
 
                         
-            # except:
+            except:
                 print("Error")
         dataf.close()
 
