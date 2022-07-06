@@ -12,6 +12,7 @@ import sys
 import math
 import csv
 import re
+from textwrap import indent
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -39,8 +40,9 @@ CHROME_PATH = '/Users/arz003/Downloads/chromedriver'
 NEXT_PATH = '//button[@aria-label="Next"]'
 
 RATING_CLASS = '_1Wv_Lm7Q0IE3AFEImQTWZ9'
-REVIEW_BLOCK_CLASS = 'pv4 bb b-gray'
-REVIEW_PATH = "//div[@class='pv4 bb b-gray']"
+REVIEW_PATH = "//div[contains(@class, 'pv4 bb b-gray')]"
+REVIEW_TEXT_PATH = ".//div[@class='_3n1ubgNywOj7LmMk3eLlub mt2']"
+REVIEW_CSS = "div[class*='pv4 bb b-gray']"
 
 # driver = webdriver.Chrome(executable_path=CHROME_PATH)
 
@@ -56,9 +58,7 @@ def main():
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36'
     }
 
-
-
-    dataf = open('./data/review_data.csv', 'w')
+    dataf = open('./data/review_data1.csv', 'w')
     # NOTE: this will re-write the file each time this file is ran
     writer = csv.writer(dataf)
     
@@ -75,76 +75,69 @@ def main():
                 driver.get(url)
                 driver.implicitly_wait(10)
 
-                head = requests.head(url, allow_redirects=True)
+                # head = requests.head(url, allow_redirects=True)
 
                 # URL filter: check if link is an HTML page
-                if 'html' in head.headers['content-type']:
-                    response = requests.get(url, headers = headers, timeout=2)
-                    # check if returns a successful status code
-                    if response.status_code == 200:
+                # if 'html' in head.headers['content-type']:
+                #     response = requests.get(url, headers = headers, timeout=2)
+                #     # check if returns a successful status code
+                #     if response.status_code == 200:
                         # download page for the link and extract page content and convert to BeautifulSoup object
-                        soup = BeautifulSoup(response.content, 'html.parser')
+                        # soup = BeautifulSoup(response.content, 'html.parser')
+ 
+                wait = WebDriverWait(driver, 20)
+                # continue clicking the next page until the last page is reached
+                while True:
+                    nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
+                    # get information per review block
+                    # last review on first page contains an extra class for some reason, may be similar for other pages
+                    reviews = driver.find_elements(By.CSS_SELECTOR, REVIEW_CSS)
+                    # reviews = driver.find_elements(By.XPATH, REVIEW_PATH)
+                    # grab data from each review on the page
+                    for review in reviews:
+                        try:
+                            # print(review.get_attribute('innerHTML') + '\n')
+                            # get star-rating values
 
-                        wait = WebDriverWait(driver, 20)
-                        # continue clicking the next page until the last page is reached
-                        while True:
-                            nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
+                            # rating = driver.findElement(By.XPATH, "//div[@class='_1Wv_Lm7Q0IE3AFEImQTWZ9']")[0]['data-star'].getText()
+                            # ratingBlock = wait.until(EC.presence_of_element_located(By.CLASS_NAME, RATING_CLASS))
+                            # rating = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='_1Wv_Lm7Q0IE3AFEImQTWZ9']")))[count]['data-star'].text
+                            rating = review.find_element(By.CLASS_NAME, RATING_CLASS).get_attribute("data-star")
+                            # rating = review.find_elements(By.CLASS_NAME, RATING_CLASS)['data-star'].text
+                            if rating == "":
+                                print("Failed to obtain rating.")
+                            # rating = ratingBlock[0]['data-star'].text()
+                            
+                            # review_text = review.find('div', id=re.compile('^review-text-')).text
+                            # review_text = review.find_element(By.XPATH, ".//div[@id='re.compile('^review-text-')']").text
+                            ''' replies to reviews have similar class values, main difference is that the original review posted will 
+                            have mt2 included as a class while replies will have mt3 included as a class. Code below retrieves the 
+                            correct nested element to get the review text '''
 
-                            # If the Next button is enabled/available, then enabled_next_page_btn size will be one.
-                            # if len(nextBtn) < 1:
-                            if not nextBtn.is_enabled():
-                                print("No more pages left")
-                                break
-                            else:
+                            review_div1 = review.find_element(By.XPATH, REVIEW_TEXT_PATH)
+                            review_div2 = review_div1.find_element(By.XPATH, ".//div[starts-with(@id,'review-text-')]")
+                            review_text = review_div2.find_element(By.TAG_NAME, "span").text
+                            # review_text = review.find_element(By.XPATH, ".//div[starts-with(@id,'review-text-')]/@href")
+                            if review_text == "":
+                                print("Failed to obtain review text.")
 
-                                # get information per review block
-                                # reviewBlock = soup.find_all('div', class_='pv4 bb b-gray')
-                                reviews = driver.find_elements(By.XPATH, REVIEW_PATH)
-                                # print(reviews)
-                                # print(reviewBlock)
-
-                                # grab data from each review on the page
-                                for count, review in enumerate(reviews):
-                                    try:
-                                        # get star-rating values
-                                        # rating_div = review.find_all('div', class_="_1Wv_Lm7Q0IE3AFEImQTWZ9")
-                                        # rating = rating_div[0]['data-star']
-
-                                        # rating = driver.findElement(By.XPATH, "//div[@class='_1Wv_Lm7Q0IE3AFEImQTWZ9']")[0]['data-star'].getText()
-                                        # rating = driver.find_element(By.CLASS_NAME, RATING_CLASS)[0]['data-star'].getText()
-                                        # rating = driver.find_elements(By.CLASS_NAME, RATING_CLASS)[count]['data-star'].text
-                                        # ratingBlock = wait.until(EC.presence_of_element_located(By.CLASS_NAME, RATING_CLASS))
-                                        # rating = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='_1Wv_Lm7Q0IE3AFEImQTWZ9']")))[count]['data-star'].text
-                                        # print(review)
-                                        rating = review.find_element(By.CLASS_NAME, RATING_CLASS).get_attribute("data-star")
-                                        # rating = review.find_elements(By.CLASS_NAME, RATING_CLASS)['data-star'].text
-                                        if rating == "":
-                                            print("Failed to obtain rating.")
-                                        # rating = ratingBlock[0]['data-star'].text()
-                                        
-                                        
-                                        # getting review text
-                                        # review_text = review.find('div', id=re.compile('^review-text-')).text
-                                        # review_text = driver.find_elements(By.XPATH, "//div[@id='id=re.compile('^review-text-')']")[count].text
-                                        # review_text = review.find_element(By.XPATH, ".//div[@id='re.compile('^review-text-')']").text
-                                        review_text = review.find_element(By.XPATH, ".//div[starts-with(@id,'review-text-')]").text
-                                        # review_text = review.find_element(By.XPATH, ".//div[starts-with(@id,'review-text-')]/@href")
-                                        if review_text == "":
-                                            print("Failed to obtain review text.")
-
-                                        # writing data to csv file
-                                        writer.writerow([rating] + [review_text.replace('\n', ' ')])
-                                    except: 
-                                        continue 
-                                # click on next page through chromedriver (+ synchronize the state between the browser and its DOM and WebDriver script)
-                                # driver.findElement(By.xpath('//button[@aria-label="Next"]')).click()   
-                                # wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH))).click()         
-                                nextBtn = wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH)))
-                                # nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
-                                driver.execute_script("arguments[0].click();", nextBtn)  
-
-
-                        
+                            # print(rating + review_text + '\n')
+                            # writing data to csv file
+                            writer.writerow([rating] + [review_text.replace('\n', ' ')])
+                        except:
+                            print("failed to retrive review") 
+                            continue
+                    
+                    # Check that there is a next button on the page
+                    if nextBtn.is_enabled():
+                        # click on next page through chromedriver (+ synchronize the state between the browser and its DOM and WebDriver script)
+                        # wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH))).click()       
+                        nextBtn = wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH)))
+                        # nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
+                        driver.execute_script("arguments[0].click();", nextBtn)   
+                    else:   
+                        print("No more pages left")
+                        break             
             except:
                 print("Error")
         dataf.close()
