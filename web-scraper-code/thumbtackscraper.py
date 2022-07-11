@@ -50,31 +50,38 @@ REVIEW_PATH = "//div[contains(@class, 'pv4 bb b-gray')]"
 REVIEW_TEXT_PATH = ".//div[@class='_3n1ubgNywOj7LmMk3eLlub mt2']"
 REVIEW_CSS = "div[class*='pv4 bb b-gray']"
 # ------------------------------------------------------------------------------------------
-def wait_for(condition_function):
-    start_time = time.time()
-    while time.time() < start_time + 3:
-        if condition_function():
-            return True
-        else:
-            time.sleep(0.1)
-    raise Exception(
-        'Timeout waiting for {}'.format(condition_function.__name__)
-    )
+# def wait_for(condition_function):
+#     start_time = time.time()
+#     while time.time() < start_time + 3:
+#         if condition_function():
+#             return True
+#         else:
+#             time.sleep(0.1)
+#     raise Exception(
+#         'Timeout waiting for {}'.format(condition_function.__name__)
+#     )
 
-def click_through_to_new_page():
-    ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
-    wait = WebDriverWait(driver, 20, ignored_exceptions = ignored_exceptions)
-    nextBtn = wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH)))            
-    # nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
-    driver.execute_script("arguments[0].click();", nextBtn)
-    def element_has_gone_stale():
-        try:
-            # poll the review elements with an arbitrary call
-            driver.find_elements(By.CSS_SELECTOR, REVIEW_CSS)
-            return False
-        except StaleElementReferenceException:
-            return True
-    wait_for(element_has_gone_stale)
+# def element_has_gone_stale():
+#     try:
+#         # poll the review elements with an arbitrary call
+#         driver.find_elements(By.CSS_SELECTOR, REVIEW_CSS)
+#         return False
+#     except StaleElementReferenceException:
+#         return True
+
+# def click_through_to_new_page():
+#     wait = WebDriverWait(driver, 20)
+#     nextBtn = wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH)))            
+#     # nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
+#     driver.execute_script("arguments[0].click();", nextBtn)
+#     # def element_has_gone_stale():
+#     #     try:
+#     #         # poll the review elements with an arbitrary call
+#     #         driver.find_elements(By.CSS_SELECTOR, REVIEW_CSS)
+#     #         return False
+#     #     except StaleElementReferenceException:
+#     #         return True
+#     wait_for(element_has_gone_stale)
 
 # driver = webdriver.Chrome(executable_path=CHROME_PATH)
 
@@ -140,8 +147,7 @@ def main():
                 #     if response.status_code == 200:
                         # download page for the link and extract page content and convert to BeautifulSoup object
                         # soup = BeautifulSoup(response.content, 'html.parser')
-                # ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
-                ignored_exceptions = (StaleElementReferenceException,)
+                ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
                 wait = WebDriverWait(driver, 20, ignored_exceptions = ignored_exceptions)
                 # continue clicking the next page until the last page is reached
                 while True:                
@@ -204,13 +210,13 @@ def main():
                     if nextBtn.is_enabled():
                         # click on next page through chromedriver (+ synchronize the state between the browser and its DOM and WebDriver script)
                         # wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH))).click() 
-                        click_through_to_new_page()      
-                        # nextBtn = wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH)))
+                        # click_through_to_new_page()      
+                        nextBtn = wait.until(EC.element_to_be_clickable((By.XPATH, NEXT_PATH)))
                         
-                        # # nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
-                        # driver.execute_script("arguments[0].click();", nextBtn)
+                        # nextBtn = driver.find_element(By.XPATH, NEXT_PATH)
+                        driver.execute_script("arguments[0].click();", nextBtn)
                         print("click")
-                        driver.implicitly_wait(0.5)   
+                        driver.implicitly_wait(10)   
                     else:   
                         print("No more pages left")
                         break             
