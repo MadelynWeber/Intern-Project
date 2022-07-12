@@ -19,7 +19,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-import pandas as pd
 from pathlib import Path
 from bs4 import BeautifulSoup
 import requests
@@ -28,6 +27,8 @@ from urllib.parse import urljoin
 from urllib.parse import urldefrag
 from urllib.request import urlopen
 from urllib.request import Request
+import pandas as pd
+
 chrome_options = webdriver.ChromeOptions()
 # chrome_options.add_argument("user-data-dir=C:\\selenium") 
 chrome_options.binary_location = "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta"
@@ -141,6 +142,9 @@ def main():
                 print("Error")
             writer.writerow('\n')
         dataf.close()
+    df = pd.read_csv ('./data/review_data.csv')
+    df.drop_duplicates(inplace = True)
+    df.to_csv('cleaned_reviews.csv', index=False)
 
 if __name__ == "__main__":
     main()
