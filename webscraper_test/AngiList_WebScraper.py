@@ -52,6 +52,7 @@ url_file = open('./review_urls.txt', 'r')
 
 try:
     for url in url_file:
+        
         # starting a new instance of webdriver
         driver = webdriver.Chrome(options=options, executable_path=CHROME_PATH)
         driver.implicitly_wait(0.5)
