@@ -3,9 +3,15 @@ from io import StringIO
 import pandas as pd
 
 def main():
+    df = pd.read_csv ('review_data.csv')
+    # following lines of code drops duplicate reviews and any rows with empty values
+    df.drop_duplicates(inplace = True)
+    df.dropna(inplace = True)
+    df.to_csv('cleaned_reviews.csv', index=False)
     df = pd.read_csv ('cleaned_reviews.csv')
-    col = ['Rating', 'Review Text']
-    df = df[col]
+    print(df)
+    # col = ['Rating', 'Review Text']
+    # df = df[col]
     # df = df[pd.notnull(df['Consumer complaint narrative'])]
     # df.columns = ['Product', 'Consumer_complaint_narrative']
     # df['category_id'] = df['Product'].factorize()[0]
