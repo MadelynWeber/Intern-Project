@@ -7,7 +7,10 @@ def main():
     # following lines of code drops duplicate reviews and any rows with empty values
     df.drop_duplicates(inplace = True)
     df.dropna(inplace = True)
-    df.to_csv('cleaned_reviews.csv', index=False)
+    # line below removes reviews without any letters or numbers (eg. reviews with only punctuation, emojis)
+    cleaned_df = df[df['ReviewText'].str.contains('[A-Za-z0-9]')]
+    # temp.to_csv("temp.csv", index=False)
+    cleaned_df.to_csv('cleaned_reviews.csv', index=False)
     df = pd.read_csv ('cleaned_reviews.csv')
     print(df)
     # col = ['Rating', 'Review Text']
