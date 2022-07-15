@@ -11,6 +11,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException  
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 import math
 import csv
 
@@ -65,6 +68,14 @@ try:
             for card in review_cards:
                 review_text = card.find_element(By.CLASS_NAME, "review-card__review-text").text
                 driver.implicitly_wait(10)
+                
+                # checking for the presense of a "... read more" option when review text is too long
+                if "Read more" in review_text and "..." in review_text:
+                    card.find_element(By.CLASS_NAME, "review-card__show-more").click()
+                    driver.implicitly_wait(10)
+                    review_text = card.find_element(By.CLASS_NAME, "review-card__review-text").text
+                    driver.implicitly_wait(10)
+
                 star_rating = math.trunc(float(card.find_element(By.CLASS_NAME, "rating-number").text))
                 driver.implicitly_wait(10)
                 print(review_text)
