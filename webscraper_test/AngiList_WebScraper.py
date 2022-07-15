@@ -7,22 +7,14 @@
         (this may be due to the web pages loading too slowly/slow internet connection -- but re-running the code 1-2 more
         times results in the code running correctly)
 '''
-from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import TimeoutException, WebDriverException
-import requests
-import csv
-import traceback
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
 import math
+import csv
 
-# variables
-URL = "https://www.angi.com/companylist/us/nc/morganton-nc/updates-by-nate-handyman-service-llc-reviews-8044039.htm"
+# CHROME_PATH needs to be changed depending on where chromedriver.exe is on machine
 CHROME_PATH = "/Users/mxw115/Downloads/chromedriver"
 
 # reviews shown in format of "Showing 1-<number> of <number> reviews"
@@ -52,7 +44,7 @@ url_file = open('./review_urls.txt', 'r')
 
 try:
     for url in url_file:
-        
+
         # starting a new instance of webdriver
         driver = webdriver.Chrome(options=options, executable_path=CHROME_PATH)
         driver.implicitly_wait(0.5)
@@ -67,7 +59,7 @@ try:
 
         # counter to keep track of what review on page we are at
         page_review_count = 0
-        while page_review_count < int(total_reviews): # NOTE: FOR TESTING ONLY --> CHANGE THIS VALUE LATER
+        while page_review_count < int(total_reviews):
             review_cards = driver.find_elements(By.CLASS_NAME, "review-card")
             driver.implicitly_wait(10)
             for card in review_cards:
@@ -93,12 +85,12 @@ try:
                 driver.implicitly_wait(10)
                 reviews_on_page = get_num_page_reviews()
 
-    # closing webdriver instance
-    driver.quit()
-    print("\nFinished scraping data.\n")
-    f.close()
-    url_file.close()
-    print("\nFinished writing data to file.\n")
+        # closing webdriver instance
+        driver.quit()
+        print("\nFinished scraping data.\n")
+        f.close()
+        url_file.close()
+        print("\nFinished writing data to file.\n")
 
 except WebDriverException as e:
     print("Something went wrong.\n Exception message: " + str(e))
