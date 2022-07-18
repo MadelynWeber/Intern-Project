@@ -23,31 +23,32 @@ def cleanReviews():
     df.dropna(inplace = True)
     # line below removes reviews without any letters or numbers (eg. reviews with only punctuation, emojis)
     cleaned_df = df[df['ReviewText'].str.contains('[A-Za-z0-9]')]
-    # temp.to_csv("temp.csv", index=False)
     cleaned_df.to_csv('cleaned_reviews.csv', index=False)
 
 def main():
     #  cleanReviews()
 
     # ------------------------------------------------ TEST REVIEWS ON ANALYSIS MODELS ---------------------------------------------------
-    df = pd.read_csv('cleaned_reviews.csv')
-    tfidf = TfidfVectorizer(sublinear_tf=True, min_df=5, norm='l2', encoding='latin-1', ngram_range=(1, 3))
-    features = tfidf.fit_transform(df.ReviewText).toarray()
-    labels = df.Rating
-    Ratings = [1, 2, 3, 4, 5, ]
-    features.shape
-    N = 5
-    for category_id in Ratings:
-        features_chi2 = chi2(features, labels == category_id)
-        indices = np.argsort(features_chi2[0])
-        feature_names = np.array(tfidf.get_feature_names_out())[indices]
-        unigrams = [v for v in feature_names if len(v.split(' ')) == 1]
-        bigrams = [v for v in feature_names if len(v.split(' ')) == 2]
-        trigrams = [v for v in feature_names if len(v.split(' ')) == 3]
-        print("# '{}':".format(category_id))
-        print("  . Most correlated unigrams:\n. {}".format('\n. '.join(unigrams[-N:])))
-        print("  . Most correlated bigrams:\n. {}".format('\n. '.join(bigrams[-N:])))
-        print("  . Most correlated trigrams:\n. {}".format('\n. '.join(trigrams[-N:])))
+    with open("temp.txt", "w", encoding="ISO-8859-1") as f:
+        df = pd.read_csv('cleaned_reviews.csv')
+        tfidf = TfidfVectorizer(sublinear_tf=True, min_df=5, norm='l2', encoding='latin-1', ngram_range=(1, 3))
+        features = tfidf.fit_transform(df.ReviewText).toarray()
+        f.write(str(features) + '\n')
+        labels = df.Rating
+        Ratings = [1, 2, 3, 4, 5, ]
+        N = 5
+        for category_id in Ratings:
+            features_chi2 = chi2(features, labels == category_id)
+            f.write(str(features_chi2))
+            indices = np.argsort(features_chi2[0])
+            feature_names = np.array(tfidf.get_feature_names_out())[indices]
+            unigrams = [v for v in feature_names if len(v.split(' ')) == 1]
+            bigrams = [v for v in feature_names if len(v.split(' ')) == 2]
+            trigrams = [v for v in feature_names if len(v.split(' ')) == 3]
+            print("# '{}':".format(category_id))
+            print("  . Most correlated unigrams:\n. {}".format('\n. '.join(unigrams[-N:])))
+            print("  . Most correlated bigrams:\n. {}".format('\n. '.join(bigrams[-N:])))
+            print("  . Most correlated trigrams:\n. {}".format('\n. '.join(trigrams[-N:])))
     # ------------------------------------------------ NAIVE BAYES CLASSIFIER  ---------------------------------------------------
 
     X_train, X_test, y_train, y_test = train_test_split(df['ReviewText'], df['Rating'], random_state = 0)
