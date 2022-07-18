@@ -1,3 +1,4 @@
+# python3 sentiment-analysis/classifier.py
 "Reads in contractor review data from web scraping code and classifies reviews on a 1-5 star scale"
 from io import StringIO
 import pandas as pd
@@ -30,9 +31,10 @@ def main():
 
     # ------------------------------------------------ TEST REVIEWS ON ANALYSIS MODELS ---------------------------------------------------
     with open("temp.txt", "w", encoding="ISO-8859-1") as f:
-        df = pd.read_csv('cleaned_reviews.csv')
+        # df = pd.read_csv('./sentiment-analysis/cleaned_reviews.csv')
+        df = pd.read_csv("./webscraper_test/data/total_data_collected_cleaned.csv")
         tfidf = TfidfVectorizer(sublinear_tf=True, min_df=5, norm='l2', encoding='latin-1', ngram_range=(1, 3))
-        features = tfidf.fit_transform(df.ReviewText).toarray()
+        features = tfidf.fit_transform(df.ReviewText.values.astype('U')).toarray()
         f.write(str(features) + '\n')
         labels = df.Rating
         Ratings = [1, 2, 3, 4, 5, ]
@@ -53,7 +55,7 @@ def main():
 
     X_train, X_test, y_train, y_test = train_test_split(df['ReviewText'], df['Rating'], random_state = 0)
     count_vect = CountVectorizer()
-    X_train_counts = count_vect.fit_transform(X_train)
+    X_train_counts = count_vect.fit_transform(X_train.values.astype('U'))
     tfidf_transformer = TfidfTransformer()
     X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
     clf = MultinomialNB().fit(X_train_tfidf, y_train)
